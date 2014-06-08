@@ -5,15 +5,15 @@ Matrix::Matrix()
 {
 }
 
-Matrix::Matrix(int size1, int size2) {
-	this->size1 = size1;
-	this->size2 = size2;
+Matrix::Matrix(int lines, int columns) {
+	this->size1 = lines;
+	this->size2 = columns;
 	vector<LINE> A;
 	LINE line;
-	for (int columns_count = 0; columns_count < size2; columns_count++) {
+	for (int columns_count = 0; columns_count < columns; columns_count++) {
 		line.push_back(0);
 	}
-	for (int lines_count = 0; lines_count < size1; lines_count++) {
+	for (int lines_count = 0; lines_count < lines; lines_count++) {
 		A.push_back(line);
 	}
 	this->M = A;
@@ -32,8 +32,10 @@ float Matrix::getElement(int index1, int index2){
 }
 
 Matrix Matrix::operator*(Matrix A){
+	// this -- первый операнд
 	if (this->size2 != A.size1) {
 		//кол-во столбцов this != кол-ву строк A
+		std::cerr << "количество столбцов не равно количеству строк";
 		return *this;
 	}
 	else {
@@ -47,7 +49,7 @@ Matrix Matrix::operator*(Matrix A){
 		float mul2 = 0;
 		for (int i = 0; i < C.size1; i++) {
 			for (int j = 0; j < C.size2; j++){
-				while (line_count < this->size1) {
+				while (line_count < A.size1) {
 					mul1 = this->getElement(i, line_count);
 					mul2 = A.getElement(column_count, j);
 					tmp += mul1 * mul2;

@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <iostream>
 using namespace std;
 typedef vector<float> LINE;
 typedef vector<LINE> MATRIX;

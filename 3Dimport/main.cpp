@@ -89,7 +89,6 @@ bool initGL()
 		//Initialize Projection Matrix
 		glMatrixMode( GL_PROJECTION );
 	glLoadIdentity();
-	//gluPerspective(50.0, 1.0, 3.0, 7.0);
 	gluPerspective(60, 1.0, 0.0, 7.0);
 
 	//Initialize Modelview Matrix
@@ -217,7 +216,7 @@ int main( int argc, char* args[] )
 		if(SDL_GetMouseState(&x, &y)&SDL_BUTTON(1)) {
 			if(prevX!=prevY!=0){
 				if(prevX-x > 20) {
-					patrick.rotateByAxe({ 0, 0, 0 }, { 0, 0, 0 }, 45);
+					patrick.rotateByAxe({ 0, 0, 0 }, { 0, 0, 0 }, 25);
 					//modelMover.rotate_model_in_x((prevX-x)*PI/180/5, patrickModel);
 					}
 				else if(x-prevX > 20) {
