@@ -112,13 +112,14 @@ Matrix Matrix::inverseMatrix() {
 		int m_line = 0;
 		int m_column = 0;
 		// Создание матриц миноров
-		while (!(m_line == M.size1 && m_column == M.size2)){
+		while (!(m_line == M.size1-1 && m_column == M.size2)){
 
 			// Связь вычёркивыемых строк/столбцов с добавляемыми в Матрицу Миноров
 			current_column = m_column;
 			current_line = m_line;
 			if (current_column == M.size1) {
 				current_column = 0;
+				current_line++;
 			}
 			//
 
@@ -155,25 +156,6 @@ Matrix Matrix::inverseMatrix() {
 				m_column++;
 			}
 
-
-			/*
-			if (m_column == M.size2) {
-				if (m_line == M.size1 - 1) {
-					M.setElement(m_line, m_column-1, TEMP.det());
-					m_line++;
-				}
-				else {
-					m_column = 0;
-					M.setElement(m_line, m_column, TEMP.det());
-					m_column++;
-					m_line++;
-				}
-			}
-			else {
-				M.setElement(m_line, m_column, TEMP.det());
-				m_column++;
-			}
-			*/
 		}
 
 		Matrix B(4, 4); // alg addition
@@ -191,7 +173,7 @@ Matrix Matrix::inverseMatrix() {
 		Matrix transposed_B = B.transposeMatrix();
 		
 		Matrix I(transposed_B.size1, transposed_B.size2);
-		I = transposed_B * (1 / B.det());
+		I = transposed_B * (1 / A.det());
 
 		return I;
 	}
@@ -200,16 +182,16 @@ Matrix Matrix::inverseMatrix() {
 
 Matrix Matrix::transposeMatrix() {
 	Matrix T(this->size2, this->size1);
-	int matrix_column = this->size2-1;	// счётчик столбцов исходной матрицы
+	int matrix_column = 0;	// счётчик столбцов исходной матрицы
 	int matrix_line = 0;	// счётчик строк исходной матрицы
-	float elem_data_data;	// элемент исходной матрицы
 	for (int i = 0; i < T.size1; i++) {
 		matrix_line = 0;
 		for (int j = 0; j < T.size2; j++) {
 			T.setElement(i, j, this->getElement(matrix_line, matrix_column));
 			matrix_line++;
-			if (matrix_line > this->size1 - 1) {
-				matrix_column--;
+			if (matrix_line == this->size1) {
+				matrix_line = 0;
+				matrix_column++;
 			}
 		}
 	}
