@@ -1,6 +1,7 @@
 #pragma once
 #include "Reader.h"
 #include <math.h>
+#include "Math.h""
 #include "Matrix.h"
 
 struct Point {

@@ -307,6 +307,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Drawer.h" />
+    <ClInclude Include="Math.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="ModelMovements.h" />
     <ClInclude Include="Object.h" />
@@ -316,6 +317,7 @@
   <ItemGroup>
     <ClCompile Include="Drawer.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Math.cpp" />
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="ModelMovements.cpp" />
     <ClCompile Include="Object.cpp" />

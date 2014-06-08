@@ -120,37 +120,6 @@ void ModelMovements::rotate_model_in_x(float angle, std::vector<FLAT> &flats){
 
 void ModelMovements::rotate_model_in_axe(Point p0, Point p1, float angle, std::vector<FLAT> &flats) {
 
-
-	Matrix A(3, 4), B(4, 3);
-	A.setElement(0, 0, 1);
-	A.setElement(0, 1, 2);
-	A.setElement(0, 2, 3);
-	A.setElement(0, 3, 4);
-	A.setElement(1, 0, 5);
-	A.setElement(1, 1, 6);
-	A.setElement(1, 2, 7);
-	A.setElement(1, 3, 8);
-	A.setElement(2, 0, 9);
-	A.setElement(2, 1, 10);
-	A.setElement(2, 2, 11);
-	A.setElement(2, 3, 12);
-
-	B.setElement(0, 0, 12);
-	B.setElement(0, 1, 11);
-	B.setElement(0, 2, 10);
-	B.setElement(1, 0, 9);
-	B.setElement(1, 1, 8);
-	B.setElement(1, 2, 7);
-	B.setElement(2, 0, 6);
-	B.setElement(2, 1, 5);
-	B.setElement(2, 2, 4);
-	B.setElement(3, 0, 3);
-	B.setElement(3, 1, 2);
-	B.setElement(3, 2, 1);
-
-	Matrix Z(3, 3);
-	Z = A*B;
-
 	Matrix T(4, 4), M(4, 4), Rx(4, 4), Ry(4, 4), Rd(4, 4), inv_T(4, 4), inv_Rx(4, 4), inv_Ry(4, 4), C(1, 3);
 
 	//c
@@ -162,23 +131,32 @@ void ModelMovements::rotate_model_in_axe(Point p0, Point p1, float angle, std::v
 	//d
 	float d = sqrt(pow(C.getElement(0, 1), 2) + pow(C.getElement(0, 2), 2));
 
-	//alpha & betta
-	float alpha = acos(C.getElement(0, 2) / d) * DEGREES_IN_RADIAN;
+	//alpha & betta (not used)
+	/*
+	float alpha = asin(C.getElement(0, 1) / d) * DEGREES_IN_RADIAN;
+	float alpha2 = acos(C.getElement(0, 2) / d) * DEGREES_IN_RADIAN;
 	float betta = acos(d) * DEGREES_IN_RADIAN;
+	float betta2 = asin(C.getElement(0, 0)) * DEGREES_IN_RADIAN;
+
+	float detected_alpha = findAngle(C.getElement(0, 2) / d, C.getElement(0, 1) / d) * DEGREES_IN_RADIAN;
+	float detected_betta = findAngle(d, C.getElement(0, 0));
+	*/
 
 	//Rd
 	Rd.setElement(0, 0, -cos(angle));
 	Rd.setElement(0, 1, sin(angle));
 	Rd.setElement(1, 0, -sin(angle));
 	Rd.setElement(1, 1, cos(angle));
+	Rd.setElement(2, 2, 1);
+	Rd.setElement(3, 3, 1);
 
 	//Rx
 	Rx.setElement(0, 0, 1);
 	Rx.setElement(3, 3, 1);
-	Rx.setElement(1, 1, cos(alpha));
-	Rx.setElement(1, 2, sin(alpha));
-	Rx.setElement(2, 1, -sin(alpha));
-	Rx.setElement(2, 2, cos(alpha));
+	Rx.setElement(1, 1, C.getElement(0, 2)/d);
+	Rx.setElement(1, 2, C.getElement(0, 1) / d);
+	Rx.setElement(2, 1, -C.getElement(0, 1) / d);
+	Rx.setElement(2, 2, C.getElement(0, 2) / d);
 
 	//Ry
 	Ry.setElement(0, 0, d);
@@ -201,7 +179,12 @@ void ModelMovements::rotate_model_in_axe(Point p0, Point p1, float angle, std::v
 	inv_Rx = Rx.inverseMatrix();
 	inv_Ry = Ry.inverseMatrix();
 
-	M = T*Rx*Ry*Rd*inv_Ry*inv_Rx*inv_T;
+	M = T * Rx;
+	M = M * Ry;
+	M = M * Rd;
+	M = M * inv_Ry;
+	M = M * inv_Rx;
+	M = M * inv_T;
 
 	for (auto &flat : flats) {
 		if (flat.is2) {
@@ -216,7 +199,15 @@ void ModelMovements::rotate_model_in_axe(Point p0, Point p1, float angle, std::v
 			X.setElement(1, 2, flat.v[1].z);
 			X.setElement(1, 3, 1);
 
-			//X = M*X;
+			X = X*M;
+
+			flat.v[0].x = X.getElement(0, 0);
+			flat.v[0].y = X.getElement(0, 1);
+			flat.v[0].z = X.getElement(0, 2);
+
+			flat.v[1].x = X.getElement(1, 0);
+			flat.v[1].y = X.getElement(1, 1);
+			flat.v[1].z = X.getElement(1, 2);
 
 		}
 		else if (flat.is3) {
@@ -236,7 +227,19 @@ void ModelMovements::rotate_model_in_axe(Point p0, Point p1, float angle, std::v
 			X.setElement(2, 2, flat.v[2].z);
 			X.setElement(2, 3, 1);
 
-			//X = M*X;
+			X = X*M;
+
+			flat.v[0].x = X.getElement(0, 0);
+			flat.v[0].y = X.getElement(0, 1);
+			flat.v[0].z = X.getElement(0, 2);
+
+			flat.v[1].x = X.getElement(1, 0);
+			flat.v[1].y = X.getElement(1, 1);
+			flat.v[1].z = X.getElement(1, 2);
+
+			flat.v[2].x = X.getElement(2, 0);
+			flat.v[2].y = X.getElement(2, 1);
+			flat.v[2].z = X.getElement(2, 2);
 		}
 		else if (flat.is4) {
 			Matrix X(4, 4);
@@ -260,7 +263,23 @@ void ModelMovements::rotate_model_in_axe(Point p0, Point p1, float angle, std::v
 			X.setElement(3, 2, flat.v[3].z);
 			X.setElement(3, 3, 1);
 
-			//X = M*X;
+			X = X*M;
+
+			flat.v[0].x = X.getElement(0, 0);
+			flat.v[0].y = X.getElement(0, 1);
+			flat.v[0].z = X.getElement(0, 2);
+
+			flat.v[1].x = X.getElement(1, 0);
+			flat.v[1].y = X.getElement(1, 1);
+			flat.v[1].z = X.getElement(1, 2);
+
+			flat.v[2].x = X.getElement(2, 0);
+			flat.v[2].y = X.getElement(2, 1);
+			flat.v[2].z = X.getElement(2, 2);
+
+			flat.v[3].x = X.getElement(3, 0);
+			flat.v[3].y = X.getElement(3, 1);
+			flat.v[3].z = X.getElement(3, 2);
 		}
 	}
 
