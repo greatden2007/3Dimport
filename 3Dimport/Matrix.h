@@ -17,6 +17,7 @@ public:
 
 	void setElement(int index1, int index2, float value);
 	float getElement(int index1, int index2);
+	void print();
 
 	Matrix operator*(Matrix A);
 	Matrix operator*(float m);

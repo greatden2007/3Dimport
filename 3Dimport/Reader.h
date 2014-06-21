@@ -45,6 +45,5 @@ class Reader
 		FLAT flat;
 		int lines;
 		int percents;
-		
 	};
 

@@ -23,6 +23,7 @@ Matrix::~Matrix()
 {
 }
 
+
 void Matrix::setElement(int index1, int index2, float value){
 	this->M.at(index1).at(index2) = value;
 }
@@ -31,7 +32,17 @@ float Matrix::getElement(int index1, int index2){
 	return this->M.at(index1).at(index2); 
 }
 
-Matrix Matrix::operator*(Matrix A){
+void Matrix::print() {
+	std::cout << endl;
+	for (int i = 0; i < this->size1; i++) {
+		for (int j = 0; j < this->size2; j++) {
+			std::cout << this->M.at(i).at(j) << "\t";
+		}
+		std::cout << endl;
+	}
+}
+
+/*Matrix Matrix::operator*(Matrix A){
 	// this -- первый операнд
 	if (this->size2 != A.size1) {
 		//кол-во столбцов this != кол-ву строк A
@@ -66,6 +77,26 @@ Matrix Matrix::operator*(Matrix A){
 	}
 
 }
+*/
+
+Matrix Matrix::operator*(Matrix B) {
+	Matrix A = *this;
+	Matrix C(A.size1, B.size2);
+	if (A.size2 != B.size1) {
+		cerr << "dim A!= dim B";
+	}
+	for (int row = 0; row < C.size1; row++) {
+		for (int col = 0; col < C.size2; col++) {
+			// Multiply the row of A by the column of B to get the row, column of product.
+			for (int inner = 0; inner < A.size2; inner++) {
+				//product[row][col] += aMatrix[row][inner] * bMatrix[inner][col];
+				C.setElement(row, col, C.getElement(row, col) + A.getElement(row, inner)*B.getElement(inner, col));
+			}
+		}
+	}
+	return C;
+}
+
 
 Matrix Matrix::operator*(float m){
 	for (int i = 0; i < this->size1; i++) {
@@ -179,6 +210,7 @@ Matrix Matrix::inverseMatrix() {
 
 		return I;
 	}
+	std::cout << endl << "Error: matrix det = 0" << endl;
 	return *this;
 }
 

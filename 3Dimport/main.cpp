@@ -94,10 +94,11 @@ bool initGL()
 	//Initialize Modelview Matrix
 	glMatrixMode( GL_MODELVIEW );
 	glLoadIdentity();
-	gluLookAt(cp.x, cp.y, cp.z,
+	/*gluLookAt(cp.x, cp.y, cp.z,
           0.0, 0.0, 0.0,
-          0.0, 1.0, 0.0);
-
+          0.0, 1.0, 0.0);*/
+	
+	gluLookAt(patrick.center.x, patrick.center.y, patrick.center.z - 2.0, patrick.center.x, patrick.center.y, patrick.center.z, 0.0, 0.5, 0.0);
 	//Initialize clear color
 	glClearColor( 0.f, 0.f, 0.f, 1.f );
 	glEnable(GL_DEPTH_TEST);
@@ -129,19 +130,24 @@ void handleKeys( SDL_Scancode key, int x, int y )
 
 
 	if ( key == SDL_SCANCODE_LEFT) {
-		patrick.moveBy(-MOVEMENT_STEP, 0, 0);
+		patrick.moveBy(MOVEMENT_STEP, 0, 0);
+		gluLookAt(patrick.center.x, patrick.center.y, patrick.center.z - 2.0, patrick.center.x, patrick.center.y, patrick.center.z, 0.0, 0.5, 0.0);
+
 	}
 
 	if ( key == SDL_SCANCODE_UP) {
 		patrick.moveBy(0, 0, MOVEMENT_STEP);
+		gluLookAt(patrick.center.x, patrick.center.y, patrick.center.z - 2.0, patrick.center.x, patrick.center.y, patrick.center.z, 0.0, 0.5, 0.0);
 	}
 
 	if ( key == SDL_SCANCODE_DOWN) {
 		patrick.moveBy(0, 0, -MOVEMENT_STEP);
+		gluLookAt(patrick.center.x, patrick.center.y, patrick.center.z - 2.0, patrick.center.x, patrick.center.y, patrick.center.z, 0.0, 0.5, 0.0);
 	}
 
 	if ( key == SDL_SCANCODE_RIGHT) {
-		patrick.moveBy(MOVEMENT_STEP, 0, 0);
+		patrick.moveBy(-MOVEMENT_STEP, 0, 0);
+		gluLookAt(patrick.center.x, patrick.center.y, patrick.center.z - 2.0, patrick.center.x, patrick.center.y, patrick.center.z, 0.0, 0.5, 0.0);
 	}
 
 	if (key == SDL_SCANCODE_LCTRL) {
@@ -200,10 +206,10 @@ int main( int argc, char* args[] )
 
 		}
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glBindTexture(GL_TEXTURE_2D, textureChess);
+		/*glBindTexture(GL_TEXTURE_2D, textureChess);
 		glEnable(GL_TEXTURE_2D);
 		drawer.drawFloor(1, 1, 1);
-		glDisable(GL_TEXTURE_2D);
+		glDisable(GL_TEXTURE_2D);*/
 
 		glBindTexture(GL_TEXTURE_2D,texturePatrick);
 		glEnable(GL_TEXTURE_2D);

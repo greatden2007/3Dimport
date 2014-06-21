@@ -1,4 +1,5 @@
 #include "Object.h"
+#define DEBUG
 
 Object::Object()
 {
@@ -127,7 +128,17 @@ int Object::moveBy(float x, float y, float z) {
 }
 
 int Object::rotateByAxe(Point axePoint1, Point axePoint2, float angle) {
-	modelMover.rotate_model_in_axe(this->center, { this->center.x, this->center.y - 1, this->center.z }, angle, this->flats);
+	axePoint1 = this->center;
+	axePoint2 = this->center;
+	axePoint2.y -= 1;
+#ifdef DEBUG
+	std::cout << "rotation in points:\n\tp1: " << axePoint1.x << " " << axePoint1.y << " " << axePoint1.z << "\n"
+		<< "\tp2:" << axePoint2.x << " " << axePoint2.y << " " << axePoint2.z << "\n"
+		<< "by angle: " << angle << "\n"
+		<< "center: " << this->center.x << " " << this->center.y << " " << this->center.z << "\n"
+		<< "box: " << this->width << " " << this->height << " " << this->depth << "\n";
+#endif
+	modelMover.rotate_model_in_axe(axePoint1, axePoint2, angle, this->flats);
 	return 0;
 }
 
