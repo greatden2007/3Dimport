@@ -1,6 +1,5 @@
 #include "Matrix.h"
-
-
+#include <ctime>
 Matrix::Matrix()
 {
 }
@@ -25,7 +24,8 @@ Matrix::~Matrix()
 
 
 void Matrix::setElement(int index1, int index2, float value){
-	this->M.at(index1).at(index2) = value;
+	//this->M.at(index1).at(index2) = value;
+	this->M[index1][index2] = value;
 }
 
 float Matrix::getElement(int index1, int index2){
@@ -41,43 +41,6 @@ void Matrix::print() {
 		std::cout << endl;
 	}
 }
-
-/*Matrix Matrix::operator*(Matrix A){
-	// this -- первый операнд
-	if (this->size2 != A.size1) {
-		//кол-во столбцов this != кол-ву строк A
-		std::cerr << "количество столбцов не равно количеству строк";
-		return *this;
-	}
-	else {
-		Matrix C(this->size1, A.size2);
-
-		// line_count и column_count -- для нахождения суммы и произведения
-		int line_count = 0;
-		int column_count = 0;
-		int tmp = 0;
-		float mul1 = 0;
-		float mul2 = 0;
-		for (int i = 0; i < C.size1; i++) {
-			for (int j = 0; j < C.size2; j++){
-				while (line_count < A.size1) {
-					mul1 = this->getElement(i, line_count);
-					mul2 = A.getElement(column_count, j);
-					tmp += mul1 * mul2;
-					line_count++;
-					column_count++;
-				}
-				C.setElement(i, j, tmp);
-				tmp = 0;
-				line_count = 0;
-				column_count = 0;
-			}
-		}
-		return C;
-	}
-
-}
-*/
 
 Matrix Matrix::operator*(Matrix B) {
 	Matrix A = *this;
@@ -230,4 +193,23 @@ Matrix Matrix::transposeMatrix() {
 		}
 	}
 	return T;
+}
+
+Matrix Matrix::addLine(Matrix M) {
+	// O(A.size1 * A.size2)
+	// M.size1 must be eq to 1
+	//M.size2 must be eq to A.size2
+	Matrix A = *this;
+	Matrix C(A.size1 + 1, M.size2);
+	
+	for (int i = 0; i < A.size1; i++) {
+		for (int j = 0; j < A.size2; j++) {
+			C.setElement(i, j, A.getElement(i, j));
+		}
+	}
+
+	for (int i = 0; i < M.size2; i++) {
+		C.setElement(A.size1, i, M.getElement(0, i));
+	}
+	return C;
 }

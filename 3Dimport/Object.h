@@ -6,7 +6,7 @@
 class Object
 {
 private:
-	std::vector<FLAT> flats;
+	std::vector<Matrix> flats;
 	Reader reader;
 	Drawer drawer;
 	ModelMovements modelMover;

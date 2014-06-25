@@ -13,200 +13,86 @@ Reader::~Reader(void)
 	{
 	}
 
-void Reader::readVertexsFromModelFile(const char* modelFileName) {
+void Reader::readVertexsFromModelFile(ifstream &stream) {
+	for (string line; getline(stream, line);) {
 
-	ifstream ModelFile (modelFileName, ifstream::binary);
-	int permamentPercents = 0;
-	std::cout <<"Reading Vertexes:  0%" ;
-
-	for(string line; getline(ModelFile, line); ) {
-
-		istringstream in(line);  
+		istringstream in(line);
+		float tmp;
+		int tmp2;
+		Matrix line_vector = *new Matrix(1, 3);
 
 		string type;
-		in >> type;      
+		in >> type;
 
-		// first part.
-		// if get VERTEX line in file
-		if(type.compare("v") == 0) {
-			in >> vertex.x >> vertex.y >> vertex.z;  
+		if (type.compare("v") == 0) {
+			in >> tmp;
+			vertex.setElement(0, 0, tmp);
+			in >> tmp;
+			vertex.setElement(0, 1, tmp);
+			in >> tmp;
+			vertex.setElement(0, 2, tmp);
 			all_vertexs.push_back(vertex);
-			permamentPercents = (all_vertexs.size()+all_texture_vertexes.size()) * 100 / lines ;
-			if(permamentPercents - this->percents > 0) {
-				this->percents = permamentPercents;
-				if(this->percents < 10)
-					std::cout << "\b\b" << this->percents << "\%";
-				else
-					std::cout << "\b\b\b" << this->percents << "\%";
-			}
 		}
-
-		if(type.compare("vt") == 0) {
-			in >> texture_vertex.x >> texture_vertex.y;
+		else if (type.compare("vt") == 0) {
+			in >> tmp;
+			texture_vertex.setElement(0, 0, tmp);
+			in >> tmp;
+			texture_vertex.setElement(0, 1, tmp);
 			all_texture_vertexes.push_back(texture_vertex);
-			permamentPercents = (all_vertexs.size()+all_texture_vertexes.size()) * 100 / lines  ;
-			if(permamentPercents - this->percents > 0) {
-				this->percents = permamentPercents;
-				if(this->percents < 10)
-					std::cout << "\b\b" << this->percents << "\%";
-				else
-					std::cout << "\b\b\b" << this->percents << "\%";
-			}
 		}
+		else if (type.compare("f") == 0) {
+			// f
+			// |	v1.x	v1.y	v1.z	|
+			// |	v2.x	v2.y	v2.z	|
+			// |	v3.x	v3.y	v3.z	|
+			flat_number = *new Matrix(0, 3);
 
-	}
-	ModelFile.close();
-	ofstream logFile ("log.txt",ios::ate);
-	logFile << "\nEnd reading vertexs \n";
-	std::cout << "\nEnd reading vertexs \n";
-	logFile.close();
+			in >> tmp2;
+			line_vector.setElement(0, 0, tmp2);
+			in >> tmp2;
+			line_vector.setElement(0, 1, tmp2);
+			in >> tmp2;
+			line_vector.setElement(0, 2, tmp2);
+			flat_number = flat_number.addLine(line_vector);
 
-}
+			in >> tmp2;
+			line_vector.setElement(0, 0, tmp2);
+			in >> tmp2;
+			line_vector.setElement(0, 1, tmp2);
+			in >> tmp2;
+			line_vector.setElement(0, 2, tmp2);
+			flat_number = flat_number.addLine(line_vector);
 
+			in >> tmp2;
+			line_vector.setElement(0, 0, tmp2);
+			in >> tmp2;
+			line_vector.setElement(0, 1, tmp2);
+			in >> tmp2;
+			line_vector.setElement(0, 2, tmp2);
+			flat_number = flat_number.addLine(line_vector);
 
-void Reader::make_FLAT_from_VERTEX(const char* modelFileName) {
-	ifstream ModelFile (modelFileName, ifstream::binary);
-	std::string error;
-	std::cout << "Reading flats:  0%";
-	int permamentPercents = 0;
-
-	int vertex_in_flat_counter = 0;
-	for(string line; getline(ModelFile, line); ) {
-		istringstream in(line); 
-		string type;
-		in >> type; 
-
-		// second part.
-		// if get FLAT line in file
-		if(type.compare("f") == 0) {
-			vertex_in_flat_counter = 0;
-			std::regex rgx("\\s(\\d+)");
-			std::smatch match;
-			std::smatch match_for_textures;
-			string bufferString(line);
-			string bufferstring_for_textures(line);
-			while (std::regex_search(bufferString, match, rgx)) {
-				bufferString = match.suffix().str();
-				vertex_in_flat_counter++;
-			}
-
-			int i = 0;
-			int vtNumber = 0;
-			boost::regex regex_for_textures("(?:\/)(\\d+)(?:\/)");
-			boost::smatch xResults;
-			std::string::const_iterator xItStart = bufferstring_for_textures.begin();
-			std::string::const_iterator xItEnd = bufferstring_for_textures.end();
-			while( boost::regex_search(xItStart, xItEnd, xResults, regex_for_textures) )
-			{
-			  std::string str = xResults[1];
-			  xItStart = xResults[1].second;
-			  vtNumber = atoi(str.c_str())-1; 
-			  	switch (vertex_in_flat_counter)
-					{
-					case 2:
-						flat.is2 = true;
-						swapTextureVertexs(flat.vt[i], all_texture_vertexes[vtNumber]);
-						i++;
-						break;
-					case 3:
-						flat.is3 = true;
-						swapTextureVertexs(flat.vt[i], all_texture_vertexes[vtNumber]);
-						i++;
-						break;
-					case 4:
-						flat.is4 = true;
-						swapTextureVertexs(flat.vt[i], all_texture_vertexes[vtNumber]);
-						i++;
-						break;
-					default:
-						error = "unrecognized flat! \n";
-						break;
-					}
-			}
-			i=0;
-			while (std::regex_search(line, match, rgx)) {
-				string floatString(match[0]);
-				int f = ::atof(floatString.c_str());
-				//cout << " " << f;
-				f--;
-				line = match.suffix().str();
-
-				switch (vertex_in_flat_counter)
-					{
-					case 2:
-						flat.is2 = true;
-						swapVertexs(flat.v[i], all_vertexs[f]);
-						//cout << "vertex: " << all_vertexs[f].x << " " << all_vertexs[f].y << " " << all_vertexs[f].z << endl;
-						i++;
-						break;
-					case 3:
-						flat.is3 = true;
-						swapVertexs(flat.v[i], all_vertexs[f]);
-						//cout << "vertex: " << all_vertexs[f].x << " " << all_vertexs[f].y << " " << all_vertexs[f].z << endl;
-						i++;
-						break;
-					case 4:
-						flat.is4 = true;
-						swapVertexs(flat.v[i], all_vertexs[f]);
-						//cout << "vertex: " << all_vertexs[f].x << " " << all_vertexs[f].y << " " << all_vertexs[f].z << endl;
-						i++;
-						break;
-					default:
-						error = "unrecognized flat! \n";
-						break;
-					}
-			}
-			all_flats.push_back(flat);
-			permamentPercents = (all_vertexs.size()+all_flats.size()+all_texture_vertexes.size()) * 100 / lines ;
-			if(permamentPercents - this->percents > 0) {
-				this->percents = permamentPercents;
-				if(this->percents > 99) percents = 99;
-				if(this->percents < 10)
-					std::cout << "\b\b" << this->percents << "\%";
-				else
-					std::cout << "\b\b\b" << this->percents << "\%";
-			}
+			all_flats_numbers.push_back(flat_number);
+			
 		}
 	}
-	ModelFile.close();
-	ofstream logFile ("log.txt",ios::ate);
-	logFile << "\nEnd reading flats with errors: \n" << error;
-	std::cout << "\nEnd reading flats with errors: \n" << error;
-	logFile.close();
 }
 
-//TODO: перегрузка оператора "=" для вертексов -- !!! возможно только при создании класса VERTEX и в нём изменении оператора "=".
-void Reader::swapVertexs (VERTEX &v1, VERTEX &v2) {
-	v1.x = v2.x;
-	v1.y = v2.y;
-	v1.z = v2.z;
+// создаёт сами поверхности из номеров вертексов
+void Reader::createFlatsFromVertexNumber() {
+	for (Matrix flat_number : all_flats_numbers) {
+		for (int i = 0; i < flat_number.size1; i++) {
+			flat = flat.addLine(all_vertexs.at(flat_number.getElement(i, 0)-1));
+		}
+		all_flats.push_back(flat);
+		flat = *new Matrix(0, 3);
+	}
 }
 
-void Reader::swapTextureVertexs (TEXTURE_VERTEX &vt1, TEXTURE_VERTEX &vt2) {
-	vt1.x = vt2.x;
-	vt1.y = vt2.y;
-}
-
-vector<FLAT> Reader::getFlats(const char* modelFileName) {
-	// Следующий код подсчитывает количество строк в файле. Исходя из того, что в каждой строке
-	// примерно 31 символов =))
-	clock_t t1,t2;
-    t1=clock();
-
-	ifstream ModelFile (modelFileName, ios::binary | ios::ate);
-	int filesize = ModelFile.tellg();
-	lines = filesize/31;
-	std::cout << "file size: " << lines << " lines" << endl;
-	ModelFile.close();
-
-	this->readVertexsFromModelFile(modelFileName);
-	this->make_FLAT_from_VERTEX(modelFileName);
-
-	t2 = clock();
-	float loadingModelTime = (float)t2 - (float)t1;
-	std::cout << "Time for Loading model: " << loadingModelTime/1000 << "seconds. All vertexes: " << all_vertexs.size()+all_texture_vertexes.size() << "(including texture vertexes: " 
-		<< all_texture_vertexes.size() << "). All flats: " << all_flats.size() << std::endl;
+vector<Matrix> Reader::readModel(const char* modelFileName) {
+	clock_t t = clock();
+	ifstream ModelFile(modelFileName, ifstream::binary);
+	readVertexsFromModelFile(ModelFile);
+	createFlatsFromVertexNumber();
+	cout << "Overall  time:" << clock() - t << "ms\n";
 	return all_flats;
 }
-
-

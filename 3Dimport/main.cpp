@@ -58,7 +58,7 @@ CAMERA_POSITION cp;
 
 void init()
 {
-	patrick = Object("Patrick.obj");
+	patrick = Object("Patrick2.obj");
 
 	SDL_Init( SDL_INIT_VIDEO );
 	
@@ -131,23 +131,24 @@ void handleKeys( SDL_Scancode key, int x, int y )
 
 	if ( key == SDL_SCANCODE_LEFT) {
 		patrick.moveBy(MOVEMENT_STEP, 0, 0);
-		gluLookAt(patrick.center.x, patrick.center.y, patrick.center.z - 2.0, patrick.center.x, patrick.center.y, patrick.center.z, 0.0, 0.5, 0.0);
+		//gluLookAt(patrick.center.x, patrick.center.y, patrick.center.z - 2.0, patrick.center.x, patrick.center.y, patrick.center.z, 0.0, 0.5, 0.0);
 
 	}
 
 	if ( key == SDL_SCANCODE_UP) {
-		patrick.moveBy(0, 0, MOVEMENT_STEP);
-		gluLookAt(patrick.center.x, patrick.center.y, patrick.center.z - 2.0, patrick.center.x, patrick.center.y, patrick.center.z, 0.0, 0.5, 0.0);
+		//patrick.moveBy(0, 0, MOVEMENT_STEP);
+		patrick.rotateByAxe({ 0, 0, 0 }, { 0, 0, 0 }, 25);
+		//gluLookAt(patrick.center.x, patrick.center.y, patrick.center.z - 2.0, patrick.center.x, patrick.center.y, patrick.center.z, 0.0, 0.5, 0.0);
 	}
 
 	if ( key == SDL_SCANCODE_DOWN) {
 		patrick.moveBy(0, 0, -MOVEMENT_STEP);
-		gluLookAt(patrick.center.x, patrick.center.y, patrick.center.z - 2.0, patrick.center.x, patrick.center.y, patrick.center.z, 0.0, 0.5, 0.0);
+		//gluLookAt(patrick.center.x, patrick.center.y, patrick.center.z - 2.0, patrick.center.x, patrick.center.y, patrick.center.z, 0.0, 0.5, 0.0);
 	}
 
 	if ( key == SDL_SCANCODE_RIGHT) {
 		patrick.moveBy(-MOVEMENT_STEP, 0, 0);
-		gluLookAt(patrick.center.x, patrick.center.y, patrick.center.z - 2.0, patrick.center.x, patrick.center.y, patrick.center.z, 0.0, 0.5, 0.0);
+		//gluLookAt(patrick.center.x, patrick.center.y, patrick.center.z - 2.0, patrick.center.x, patrick.center.y, patrick.center.z, 0.0, 0.5, 0.0);
 	}
 
 	if (key == SDL_SCANCODE_LCTRL) {
@@ -215,6 +216,7 @@ int main( int argc, char* args[] )
 		glEnable(GL_TEXTURE_2D);
 		if(patrick.size != 0) {
 			patrick.draw();
+			cout << "tick\n";
 		}
 		glDisable(GL_TEXTURE_2D);
 		handleMouseCoord(e);

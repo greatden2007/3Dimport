@@ -12,103 +12,26 @@ Object::~Object()
 
 Object::Object(const char *filename) {
 	this->size = 1;
-	this->flats = reader.getFlats(filename);
+	this->flats = reader.readModel(filename);
 	searchFor_Height_Width_Depth_Center();
-	
 }
 
 int Object::searchFor_Height_Width_Depth_Center() {
-	VERTEX tmp;
+	Matrix tmp(1, 3);
 	this->height = 0;
 	this->width = 0;
 	this->depth = 0;
 	this->center = { 0, 0, 0 };
-	for (auto &flat : this->flats) {
-		if (flat.is2) {
-			if (flat.v[0].x > this->width) {
-				this->width = flat.v[0].x;
+	for (Matrix flat : this->flats) {
+		for (int i = 0; i < flat.size1; i++) {
+			if (flat.getElement(i, 0) > this->width) {
+				this->width = flat.getElement(i, 0);
 			}
-			if (flat.v[0].y > this->height) {
-				this->height = flat.v[0].y;
+			if (flat.getElement(i, 1) > this->height) {
+				this->height = flat.getElement(i, 1);
 			}
-			if (flat.v[0].z > this->depth) {
-				this->depth = flat.v[0].z;
-			}
-			if (flat.v[1].x > this->width) {
-				this->width = flat.v[1].x;
-			}
-			if (flat.v[1].y > this->height) {
-				this->height = flat.v[1].y;
-			}
-			if (flat.v[1].z > this->depth) {
-				this->depth = flat.v[1].z;
-			}
-		}
-		else if (flat.is3) {
-			if (flat.v[0].x > this->width) {
-				this->width = flat.v[0].x;
-			}
-			if (flat.v[0].y > this->height) {
-				this->height = flat.v[0].y;
-			}
-			if (flat.v[0].z > this->depth) {
-				this->depth = flat.v[0].z;
-			}
-			if (flat.v[1].x > this->width) {
-				this->width = flat.v[1].x;
-			}
-			if (flat.v[1].y > this->height) {
-				this->height = flat.v[1].y;
-			}
-			if (flat.v[1].z > this->depth) {
-				this->depth = flat.v[1].z;
-			}
-			if (flat.v[2].x > this->width) {
-				this->width = flat.v[1].x;
-			}
-			if (flat.v[2].y > this->height) {
-				this->height = flat.v[1].y;
-			}
-			if (flat.v[2].z > this->depth) {
-				this->depth = flat.v[1].z;
-			}
-		}
-		else if (flat.is4) {
-			if (flat.v[0].x > this->width) {
-				this->width = flat.v[0].x;
-			}
-			if (flat.v[0].y > this->height) {
-				this->height = flat.v[0].y;
-			}
-			if (flat.v[0].z > this->depth) {
-				this->depth = flat.v[0].z;
-			}
-			if (flat.v[1].x > this->width) {
-				this->width = flat.v[1].x;
-			}
-			if (flat.v[1].y > this->height) {
-				this->height = flat.v[1].y;
-			}
-			if (flat.v[1].z > this->depth) {
-				this->depth = flat.v[1].z;
-			}
-			if (flat.v[2].x > this->width) {
-				this->width = flat.v[1].x;
-			}
-			if (flat.v[2].y > this->height) {
-				this->height = flat.v[1].y;
-			}
-			if (flat.v[2].z > this->depth) {
-				this->depth = flat.v[1].z;
-			}
-			if (flat.v[3].x > this->width) {
-				this->width = flat.v[1].x;
-			}
-			if (flat.v[3].y > this->height) {
-				this->height = flat.v[1].y;
-			}
-			if (flat.v[4].z > this->depth) {
-				this->depth = flat.v[1].z;
+			if (flat.getElement(i, 2) > this->depth) {
+				this->depth = flat.getElement(i, 2);
 			}
 		}
 	}

@@ -12,84 +12,32 @@ Drawer::~Drawer(void)
 	{
 	}
 
-void Drawer::drawVertex(VERTEX v) {
-	glVertex3f(v.x, v.y, v.z);
+void Drawer::drawVertex(Matrix v) {
+	glVertex3f(v.getElement(0, 0), v.getElement(0, 1), v.getElement(0, 2));
 }
 
-void Drawer::drawTextureVertex(TEXTURE_VERTEX vt) {
-	glTexCoord2f(vt.x, vt.y);
+void Drawer::drawTextureVertex(Matrix vt) {
+	glTexCoord2f(vt.getElement(0, 0), vt.getElement(0, 1));
 }
 
-void Drawer::drawFlat(FLAT flat) {
+void Drawer::drawFlat(Matrix flat) {
 
 	glColor3f(1, 1, 1);
-	if( flat.is2) {
-	glBegin( GL_LINES );
-	drawTextureVertex(flat.vt[0]);
-	drawVertex(flat.v[0]);
-	drawTextureVertex(flat.vt[1]);
-	drawVertex(flat.v[1]);
-	glEnd();
-
-	//glColor3f(0.0f, 0.0f, 0.0f);
-	//glBegin(GL_LINES);
-	//drawVertex(flat.v[0]);
-	//drawVertex(flat.v[1]);
-	//glEnd();
+	glBegin(GL_TRIANGLES);
+	Matrix vertex(1, 3);
+	for (int i = 0; i < flat.size1; i++)  {
+		vertex.setElement(0, 0, flat.getElement(i, 0));
+		vertex.setElement(0, 1, flat.getElement(i, 1));
+		vertex.setElement(0, 2, flat.getElement(i, 2));
+		drawVertex(vertex);
+		//TODO: drawTextureVertex(texture_vertex);
+		// сложность в том, что нужно добавить поля в матрицу flat. но тогда с ней нельзя делать мат. операций.
+		// или создать новую матрицу texture_flat;
 	}
-
-	else if (flat.is3) {
-	glColor3f(1, 1, 1);
-	glBegin( GL_TRIANGLES );
-	drawTextureVertex(flat.vt[0]);
-	drawVertex(flat.v[0]);
-	drawTextureVertex(flat.vt[1]);
-	drawVertex(flat.v[1]);
-	drawTextureVertex(flat.vt[2]);
-	drawVertex(flat.v[2]);
 	glEnd();
-
-	//glColor3f(0.0f, 0.0f, 0.0f);
-	//glBegin(GL_LINES);
-	//drawVertex(flat.v[0]);
-	//drawVertex(flat.v[1]);
-	//drawVertex(flat.v[1]);
-	//drawVertex(flat.v[2]);
-	//drawVertex(flat.v[2]);
-	//drawVertex(flat.v[0]);
-	//glEnd();
-	}
-
-	else if (flat.is4) {
-	glColor3f(1, 1, 1);
-	glBegin( GL_QUADS );
-	drawTextureVertex(flat.vt[0]);
-	drawVertex(flat.v[0]);
-	drawTextureVertex(flat.vt[1]);
-	drawVertex(flat.v[1]);
-	drawTextureVertex(flat.vt[2]);
-	drawVertex(flat.v[2]);
-	drawTextureVertex(flat.vt[3]);
-	drawVertex(flat.v[3]);
-	glEnd();
-
-	//glColor3f(0.0f, 0.0f, 0.0f);
-	//glBegin(GL_LINES);
-	//drawVertex(flat.v[0]);
-	//drawVertex(flat.v[1]);
-	//drawVertex(flat.v[1]);
-	//drawVertex(flat.v[2]);
-	//drawVertex(flat.v[2]);
-	//drawVertex(flat.v[3]);
-	//drawVertex(flat.v[3]);
-	//drawVertex(flat.v[0]);
-	//glEnd();
-	}
-
-	else std::cout << " I dont know how to draw this flat, sorry.";
 }
 
-void Drawer::drawFlats(std::vector<FLAT> flats) {
+void Drawer::drawFlats(std::vector<Matrix> flats) {
 	for( auto flat:flats) {
 		drawFlat(flat);
 	}

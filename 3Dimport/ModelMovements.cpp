@@ -1,4 +1,5 @@
 #include "ModelMovements.h"
+#include <ctime>
 #define DEGREES_IN_RADIAN 57.2957795
 #define RADIANS_IN_DEGREES 0.017444
 
@@ -12,32 +13,18 @@ ModelMovements::~ModelMovements(void)
 	{
 	}
 
-void ModelMovements::move_model_by(float x, float y, float z, std::vector<FLAT> &flats) {
-	for (auto &flat : flats) {
-
-		if (flat.is2) {
-			flat.v[0].x += x; flat.v[0].y += y; flat.v[0].z += z;
-			flat.v[1].x += x; flat.v[1].y += y; flat.v[1].z += z;
+void ModelMovements::move_model_by(float x, float y, float z, std::vector<Matrix> &flats) {
+	for (Matrix &flat : flats) {
+		for (int i = 0; i < flat.size1; i++) {
+			flat.setElement(i, 0, flat.getElement(i, 0) + x*10);
+			flat.setElement(i, 1, flat.getElement(i, 1) + y*10);
+			flat.setElement(i, 2, flat.getElement(i, 2) + z*10);
 		}
-
-		if (flat.is3) {
-			flat.v[0].x += x; flat.v[0].y += y; flat.v[0].z += z;
-			flat.v[1].x += x; flat.v[1].y += y; flat.v[1].z += z;
-			flat.v[2].x += x; flat.v[2].y += y; flat.v[2].z += z;
-		}
-
-		if (flat.is4) {
-			flat.v[0].x += x; flat.v[0].y += y; flat.v[0].z += z;
-			flat.v[1].x += x; flat.v[1].y += y; flat.v[1].z += z;
-			flat.v[2].x += x; flat.v[2].y += y; flat.v[2].z += z;
-			flat.v[3].x += x; flat.v[3].y += y; flat.v[3].z += z;
-		}
-
 	}
 }
 
-void ModelMovements::rotate_model_in_z(float angle, std::vector<FLAT> &flats){
-	for(auto &flat:flats) {
+void ModelMovements::rotate_model_in_z(float angle, std::vector<Matrix> &flats){
+	/*for(auto &flat:flats) {
 		float originalX;
 		if(flat.is2) {
 			originalX = flat.v[0].x;
@@ -74,11 +61,11 @@ void ModelMovements::rotate_model_in_z(float angle, std::vector<FLAT> &flats){
 			flat.v[3].x = originalX*cos(angle) - flat.v[3].y*sin(angle);
 			flat.v[3].y = originalX*sin(angle) + flat.v[3].y*cos(angle);
 		}
-	}
+	}*/
 }
 
-void ModelMovements::rotate_model_in_x(float angle, std::vector<FLAT> &flats){
-	for(auto &flat:flats) {
+void ModelMovements::rotate_model_in_x(float angle, std::vector<Matrix> &flats){
+	/*for(auto &flat:flats) {
 		float originalY;
 		if(flat.is2) {
 			originalY = flat.v[0].y;
@@ -115,11 +102,12 @@ void ModelMovements::rotate_model_in_x(float angle, std::vector<FLAT> &flats){
 			flat.v[3].y = originalY*cos(angle) - flat.v[3].z*sin(angle);
 			flat.v[3].z = originalY*sin(angle) + flat.v[3].z*cos(angle);
 		}
-	}
+	}*/
 }
 
 
-void ModelMovements::rotate_model_in_axe(Point p0, Point p1, float angle, std::vector<FLAT> &flats) {
+void ModelMovements::rotate_model_in_axe(Point p0, Point p1, float angle, std::vector<Matrix> &flats) {
+	clock_t t = clock();
 	angle = angle*RADIANS_IN_DEGREES;
 	Matrix T(4, 4), M(4, 4), Rx(4, 4), Ry(4, 4), Rd(4, 4), inv_T(4, 4), inv_Rx(4, 4), inv_Ry(4, 4), C(1, 3);
 
@@ -179,101 +167,8 @@ void ModelMovements::rotate_model_in_axe(Point p0, Point p1, float angle, std::v
 	M = M * Ry;
 	M.print();
 
-	for (auto &flat : flats) {
-		if (flat.is2) {
-			Matrix X(2, 4);
-			X.setElement(0, 0, flat.v[0].x);
-			X.setElement(0, 1, flat.v[0].y);
-			X.setElement(0, 2, flat.v[0].z);
-			X.setElement(0, 3, 1);
-
-			X.setElement(1, 0, flat.v[1].x);
-			X.setElement(1, 1, flat.v[1].y);
-			X.setElement(1, 2, flat.v[1].z);
-			X.setElement(1, 3, 1);
-
-			X = X*M*Rd*M.inverseMatrix();
-
-			flat.v[0].x = X.getElement(0, 0);
-			flat.v[0].y = X.getElement(0, 1);
-			flat.v[0].z = X.getElement(0, 2);
-
-			flat.v[1].x = X.getElement(1, 0);
-			flat.v[1].y = X.getElement(1, 1);
-			flat.v[1].z = X.getElement(1, 2);
-
-		}
-		else if (flat.is3) {
-			Matrix X(3, 4);
-			X.setElement(0, 0, flat.v[0].x);
-			X.setElement(0, 1, flat.v[0].y);
-			X.setElement(0, 2, flat.v[0].z);
-			X.setElement(0, 3, 1);
-
-			X.setElement(1, 0, flat.v[1].x);
-			X.setElement(1, 1, flat.v[1].y);
-			X.setElement(1, 2, flat.v[1].z);
-			X.setElement(1, 3, 1);
-
-			X.setElement(2, 0, flat.v[2].x);
-			X.setElement(2, 1, flat.v[2].y);
-			X.setElement(2, 2, flat.v[2].z);
-			X.setElement(2, 3, 1);
-
-			X = X*M*Rd*M.inverseMatrix();
-
-			flat.v[0].x = X.getElement(0, 0);
-			flat.v[0].y = X.getElement(0, 1);
-			flat.v[0].z = X.getElement(0, 2);
-
-			flat.v[1].x = X.getElement(1, 0);
-			flat.v[1].y = X.getElement(1, 1);
-			flat.v[1].z = X.getElement(1, 2);
-
-			flat.v[2].x = X.getElement(2, 0);
-			flat.v[2].y = X.getElement(2, 1);
-			flat.v[2].z = X.getElement(2, 2);
-		}
-		else if (flat.is4) {
-			Matrix X(4, 4);
-			X.setElement(0, 0, flat.v[0].x);
-			X.setElement(0, 1, flat.v[0].y);
-			X.setElement(0, 2, flat.v[0].z);
-			X.setElement(0, 3, 1);
-
-			X.setElement(1, 0, flat.v[1].x);
-			X.setElement(1, 1, flat.v[1].y);
-			X.setElement(1, 2, flat.v[1].z);
-			X.setElement(1, 3, 1);
-
-			X.setElement(2, 0, flat.v[2].x);
-			X.setElement(2, 1, flat.v[2].y);
-			X.setElement(2, 2, flat.v[2].z);
-			X.setElement(2, 3, 1);
-
-			X.setElement(3, 0, flat.v[3].x);
-			X.setElement(3, 1, flat.v[3].y);
-			X.setElement(3, 2, flat.v[3].z);
-			X.setElement(3, 3, 1);
-
-			X = X*M*Rd*M.inverseMatrix();
-
-			flat.v[0].x = X.getElement(0, 0);
-			flat.v[0].y = X.getElement(0, 1);
-			flat.v[0].z = X.getElement(0, 2);
-
-			flat.v[1].x = X.getElement(1, 0);
-			flat.v[1].y = X.getElement(1, 1);
-			flat.v[1].z = X.getElement(1, 2);
-
-			flat.v[2].x = X.getElement(2, 0);
-			flat.v[2].y = X.getElement(2, 1);
-			flat.v[2].z = X.getElement(2, 2);
-
-			flat.v[3].x = X.getElement(3, 0);
-			flat.v[3].y = X.getElement(3, 1);
-			flat.v[3].z = X.getElement(3, 2);
-		}
+	for (Matrix &flat : flats) {
+		flat = flat*M*Rd*M.inverseMatrix();
 	}
-	cout << "\nrotation done at angle " << angle;
+	cout << "\nrotation done at angle " << angle << " in " << clock() - t << " ms";
 }

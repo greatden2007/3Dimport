@@ -24,5 +24,7 @@ public:
 	Matrix inverseMatrix();
 	Matrix transposeMatrix();
 	float det();
+
+	Matrix addLine(Matrix M);
 };
 

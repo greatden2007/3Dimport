@@ -3,25 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
-
-typedef struct VERTEX {
-	float x;
-	float y;
-	float z;
-};
-
-typedef struct TEXTURE_VERTEX {
-	float x;
-	float y;
-};
-
-typedef struct FLAT {
-	bool is2;
-	bool is3;
-	bool is4;
-	VERTEX v[4];
-	TEXTURE_VERTEX vt[4];
-};
+#include "Matrix.h""
 
 using namespace std;
 class Reader
@@ -29,20 +11,20 @@ class Reader
 	public:
 		Reader(void);
 		~Reader(void);
-		void readVertexsFromModelFile(const char* modelFileName);
-		void readFlatsFromModelFile(const char* modelFileName);
-		std::vector<FLAT> getFlats(const char* modelFileName);
+		void readVertexsFromModelFile(ifstream &stream);
+		void createFlatsFromVertexNumber();
+		vector<Matrix> readModel(const char* modelFileName);
 
 	private:
-		void swapVertexs (VERTEX &v1, VERTEX &v2);
-		void swapTextureVertexs (TEXTURE_VERTEX &vt1, TEXTURE_VERTEX &vt2);
-		virtual virtual void make_FLAT_from_VERTEX(const char* modelFileName);
-		std::vector<FLAT> all_flats;
-		std::vector<VERTEX> all_vertexs;
-		std::vector<TEXTURE_VERTEX> all_texture_vertexes;
-		TEXTURE_VERTEX texture_vertex;
-		VERTEX vertex;
-		FLAT flat;
+		Matrix vertex = *new Matrix(1, 3);
+		Matrix texture_vertex = *new Matrix(1, 2);
+		
+		std::vector<Matrix> all_flats;
+		std::vector<Matrix> all_flats_numbers;
+		std::vector<Matrix> all_vertexs;
+		std::vector<Matrix> all_texture_vertexes;
+		Matrix flat_number = *new Matrix(0,3);
+		Matrix flat = *new Matrix(0, 3);
 		int lines;
 		int percents;
 	};
