@@ -136,8 +136,7 @@ void handleKeys( SDL_Scancode key, int x, int y )
 	}
 
 	if ( key == SDL_SCANCODE_UP) {
-		//patrick.moveBy(0, 0, MOVEMENT_STEP);
-		patrick.rotateByAxe({ 0, 0, 0 }, { 0, 0, 0 }, 25);
+		patrick.moveBy(0, 0, MOVEMENT_STEP);
 		//gluLookAt(patrick.center.x, patrick.center.y, patrick.center.z - 2.0, patrick.center.x, patrick.center.y, patrick.center.z, 0.0, 0.5, 0.0);
 	}
 

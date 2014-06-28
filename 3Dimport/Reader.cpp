@@ -14,12 +14,12 @@ Reader::~Reader(void)
 	}
 
 void Reader::readVertexsFromModelFile(ifstream &stream) {
+	float tmp;
+	int tmp2;
+	int counter; // для подсчёта количества линий и добавлении их в матрицу при необходимости
 	for (string line; getline(stream, line);) {
-
+		counter = 0;
 		istringstream in(line);
-		float tmp;
-		int tmp2;
-		Matrix line_vector = *new Matrix(1, 3);
 
 		string type;
 		in >> type;
@@ -45,7 +45,21 @@ void Reader::readVertexsFromModelFile(ifstream &stream) {
 			// |	v1.x	v1.y	v1.z	|
 			// |	v2.x	v2.y	v2.z	|
 			// |	v3.x	v3.y	v3.z	|
-			flat_number = *new Matrix(0, 3);
+
+			// что за хуйня? вынести в функцию три блока ниже
+			in >> tmp2;
+			line_vector.setElement(0, 0, tmp2);
+			in >> tmp2;
+			line_vector.setElement(0, 1, tmp2);
+			in >> tmp2;
+			line_vector.setElement(0, 2, tmp2);
+			counter++;
+			if (flat_number.size1 < counter){
+				flat_number = flat_number.addLine(this->line_vector);
+			}
+			else {
+				flat_number.setVectorToLine(counter - 1, line_vector);
+			}
 
 			in >> tmp2;
 			line_vector.setElement(0, 0, tmp2);
@@ -53,7 +67,13 @@ void Reader::readVertexsFromModelFile(ifstream &stream) {
 			line_vector.setElement(0, 1, tmp2);
 			in >> tmp2;
 			line_vector.setElement(0, 2, tmp2);
-			flat_number = flat_number.addLine(line_vector);
+			counter++;
+			if (flat_number.size1 < counter){
+				flat_number = flat_number.addLine(this->line_vector);
+			}
+			else {
+				flat_number.setVectorToLine(counter - 1, line_vector);
+			}
 
 			in >> tmp2;
 			line_vector.setElement(0, 0, tmp2);
@@ -61,30 +81,37 @@ void Reader::readVertexsFromModelFile(ifstream &stream) {
 			line_vector.setElement(0, 1, tmp2);
 			in >> tmp2;
 			line_vector.setElement(0, 2, tmp2);
-			flat_number = flat_number.addLine(line_vector);
-
-			in >> tmp2;
-			line_vector.setElement(0, 0, tmp2);
-			in >> tmp2;
-			line_vector.setElement(0, 1, tmp2);
-			in >> tmp2;
-			line_vector.setElement(0, 2, tmp2);
-			flat_number = flat_number.addLine(line_vector);
+			counter++;
+			if (flat_number.size1 < counter){
+				flat_number = flat_number.addLine(this->line_vector);
+			}
+			else {
+				flat_number.setVectorToLine(counter - 1, line_vector);
+			}
 
 			all_flats_numbers.push_back(flat_number);
-			
 		}
 	}
 }
 
 // создаёт сами поверхности из номеров вертексов
 void Reader::createFlatsFromVertexNumber() {
+	int i = 0;
+	// проходим все матрицы с номерами вертексов на нулевой позиции
 	for (Matrix flat_number : all_flats_numbers) {
-		for (int i = 0; i < flat_number.size1; i++) {
-			flat = flat.addLine(all_vertexs.at(flat_number.getElement(i, 0)-1));
+		// берём все строки очередной матрицы
+		for (i = 0; i < flat_number.size1; i++) {
+			//если размер матрцы [0] или [3, а нужен 4], то увеличиваем его добавлением вектора
+			if (flat.size1 < flat_number.size1) {
+				flat = flat.addLine(all_vertexs.at(flat_number.getElement(i, 0) - 1));
+			}
+			// если размер матрицы подходящий
+			else {
+				flat.setVectorToLine(i, all_vertexs.at(flat_number.getElement(i, 0) - 1));
+			}
+			
 		}
 		all_flats.push_back(flat);
-		flat = *new Matrix(0, 3);
 	}
 }
 

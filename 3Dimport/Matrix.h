@@ -25,6 +25,7 @@ public:
 	Matrix transposeMatrix();
 	float det();
 
-	Matrix addLine(Matrix M);
+	Matrix addLine(Matrix &M);
+	void setVectorToLine(int line, Matrix &A);
 };
 

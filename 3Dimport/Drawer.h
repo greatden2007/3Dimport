@@ -6,11 +6,12 @@ class Drawer
 	public:
 		Drawer(void);
 		~Drawer(void);
-		void drawFlats(std::vector<Matrix> flats);
+		void drawFlats(std::vector<Matrix> &flats);
 		void drawFloor(float red, float green, float blue);
 	private:
-		void drawVertex(Matrix v);
-		void drawTextureVertex(Matrix vt);
-		void drawFlat(Matrix flat);
+		Matrix vertex = *new Matrix(1, 3);
+		void drawVertex(Matrix &v);
+		void drawTextureVertex(Matrix &vt);
+		void drawFlat(Matrix &flat);
 	};
 

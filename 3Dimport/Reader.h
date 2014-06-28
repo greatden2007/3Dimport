@@ -18,12 +18,13 @@ class Reader
 	private:
 		Matrix vertex = *new Matrix(1, 3);
 		Matrix texture_vertex = *new Matrix(1, 2);
+		Matrix line_vector = *new Matrix(1, 3);
 		
 		std::vector<Matrix> all_flats;
 		std::vector<Matrix> all_flats_numbers;
 		std::vector<Matrix> all_vertexs;
 		std::vector<Matrix> all_texture_vertexes;
-		Matrix flat_number = *new Matrix(0,3);
+		Matrix flat_number = *new Matrix(3,3);
 		Matrix flat = *new Matrix(0, 3);
 		int lines;
 		int percents;

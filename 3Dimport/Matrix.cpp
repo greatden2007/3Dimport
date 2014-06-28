@@ -195,7 +195,7 @@ Matrix Matrix::transposeMatrix() {
 	return T;
 }
 
-Matrix Matrix::addLine(Matrix M) {
+Matrix Matrix::addLine(Matrix &M) {
 	// O(A.size1 * A.size2)
 	// M.size1 must be eq to 1
 	//M.size2 must be eq to A.size2
@@ -212,4 +212,10 @@ Matrix Matrix::addLine(Matrix M) {
 		C.setElement(A.size1, i, M.getElement(0, i));
 	}
 	return C;
+}
+
+void Matrix::setVectorToLine(int line, Matrix &A) {
+	for (int i = 0; i < A.size2; i++) {
+		this->setElement(line, i, A.getElement(0, i));
+	}
 }
